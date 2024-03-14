@@ -24,18 +24,19 @@ async def read_root():
 @app.post("/api/v1/get_ai_chat_response")
 async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
     svc = Services(req)
-    response = await svc.chat.get_ai_chat_response(req)
-    res = GetAiChatResponseOutput(response=response)
+    res = await svc.chat.get_ai_chat_response(req)
     return res
 
 
 @app.post("/api/v1/get_user_chat_history")
 async def get_user_chat_history(req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
-    res = [UserChatMessage(type="user", text="echo")]
+    svc = Services(req)
+    res = await svc.chat.get_user_chat_history(req)
     return res
 
 
 @app.post("/api/v1/get_chat_status_today")
 async def get_chat_status_today(req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
-    res = GetChatStatusTodayOutput(user_name=req.user_name, chat_cnt=0)
+    svc = Services(req)
+    res = await svc.chat.get_chat_status_today(req)
     return res
