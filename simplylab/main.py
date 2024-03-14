@@ -1,7 +1,8 @@
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from dotenv import load_dotenv
+from starlette.responses import JSONResponse
 
 from simplylab.entity import GetAiChatResponseInput
 from simplylab.entity import GetAiChatResponseOutput
@@ -9,11 +10,19 @@ from simplylab.entity import GetUserChatHistoryInput
 from simplylab.entity import GetUserChatHistoryOutput
 from simplylab.entity import GetChatStatusTodayInput
 from simplylab.entity import GetChatStatusTodayOutput
-from simplylab.entity import UserChatMessage
+from simplylab.error import Error
 from simplylab.services import Services
 
 load_dotenv()
 app = FastAPI()
+
+
+@app.exception_handler(Error)
+async def error_handler(request: Request, exc: Error):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": str(exc)}
+    )
 
 
 @app.get("/")
