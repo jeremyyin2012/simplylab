@@ -8,11 +8,11 @@ from simplylab.providers import Providers
 class ChatService:
     def __init__(self, ctx: Any):
         self.ctx = ctx
+        self.pvd = Providers()
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-        pvd = Providers()
         message = req.message
-        response_content = await pvd.openrouter.chat(content=message)
+        response_content = await self.pvd.openrouter.chat(content=message)
         res = GetAiChatResponseOutput(response=response_content)
         return res
 
