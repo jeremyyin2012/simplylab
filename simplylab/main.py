@@ -26,7 +26,7 @@ async def error_handler(request: Request, exc: Error):
 
 
 @app.get("/")
-async def read_root():
+async def hi():
     return {"Hello": "World"}
 
 
