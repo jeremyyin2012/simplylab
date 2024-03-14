@@ -1,15 +1,18 @@
 from typing import Union
 
 from fastapi import FastAPI
+from dotenv import load_dotenv
 
-from .entity import GetAiChatResponseInput
-from .entity import GetAiChatResponseOutput
-from .entity import GetUserChatHistoryInput
-from .entity import GetUserChatHistoryOutput
-from .entity import GetChatStatusTodayInput
-from .entity import GetChatStatusTodayOutput
-from .entity import UserChatMessage
+from simplylab.entity import GetAiChatResponseInput
+from simplylab.entity import GetAiChatResponseOutput
+from simplylab.entity import GetUserChatHistoryInput
+from simplylab.entity import GetUserChatHistoryOutput
+from simplylab.entity import GetChatStatusTodayInput
+from simplylab.entity import GetChatStatusTodayOutput
+from simplylab.entity import UserChatMessage
+from simplylab.services import Services
 
+load_dotenv()
 app = FastAPI()
 
 
@@ -20,7 +23,9 @@ async def read_root():
 
 @app.post("/api/v1/get_ai_chat_response")
 async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-    res = GetAiChatResponseOutput(response="Hello World")
+    svc = Services(req)
+    response = await svc.chat.get_ai_chat_response(req)
+    res = GetAiChatResponseOutput(response=response)
     return res
 
 
