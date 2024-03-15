@@ -95,13 +95,13 @@ async def get_user_chat_history(request: Request, req: GetUserChatHistoryInput) 
     return res
 
 
-@app.post("/api/v1/get_chat_status_today")
-async def get_chat_status_today(request: Request, req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
+@app.get("/api/v1/get_chat_status_today")
+async def get_chat_status_today(request: Request, user_name: str) -> GetChatStatusTodayOutput:
     pvd = Providers(db=request.app.db)
-    user = await pvd.user.get_user_by_name(req.user_name)
+    user = await pvd.user.get_user_by_name(user_name)
     if not user:
-        raise UserNotFoundError(req.user_name)
+        raise UserNotFoundError(user_name)
     ctx = Context(user=user)
     svc = Services(ctx, pvd)
-    res = await svc.chat.get_chat_status_today(req)
+    res = await svc.chat.get_chat_status_today()
     return res

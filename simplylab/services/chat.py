@@ -47,7 +47,7 @@ class ChatService:
             res.append(UserChatMessage(type=message.type.value, text=message.text))
         return res
 
-    async def get_chat_status_today(self, req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
+    async def get_chat_status_today(self) -> GetChatStatusTodayOutput:
         count = await self.pvd.chat.get_user_chat_messages_count_today(user_id=self.ctx.user.id)
         res = GetChatStatusTodayOutput(user_name=self.ctx.user.name, chat_cnt=count)
         return res
