@@ -10,7 +10,7 @@ from simplylab.entity import GetUserChatHistoryInput
 from simplylab.entity import GetUserChatHistoryOutput
 from simplylab.entity import GetChatStatusTodayInput
 from simplylab.entity import GetChatStatusTodayOutput
-from simplylab.error import Error
+from simplylab.error import Error, UserNotFoundError
 from simplylab.providers import Providers
 from simplylab.services import Services
 
@@ -33,8 +33,11 @@ async def hi():
 
 @app.post("/api/v1/get_ai_chat_response")
 async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-    ctx = Context(user_name=req.user_name)
     pvd = Providers()
+    user = await pvd.user.get_user_by_name(req.user_name)
+    if not user:
+        raise UserNotFoundError(req.user_name)
+    ctx = Context(user=user)
     svc = Services(ctx, pvd)
     res = await svc.chat.get_ai_chat_response(req)
     return res
@@ -42,8 +45,11 @@ async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponse
 
 @app.post("/api/v1/get_user_chat_history")
 async def get_user_chat_history(req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
-    ctx = Context(user_name=req.user_name)
     pvd = Providers()
+    user = await pvd.user.get_user_by_name(req.user_name)
+    if not user:
+        raise UserNotFoundError(req.user_name)
+    ctx = Context(user=user)
     svc = Services(ctx, pvd)
     res = await svc.chat.get_user_chat_history(req)
     return res
@@ -51,8 +57,11 @@ async def get_user_chat_history(req: GetUserChatHistoryInput) -> GetUserChatHist
 
 @app.post("/api/v1/get_chat_status_today")
 async def get_chat_status_today(req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
-    ctx = Context(user_name=req.user_name)
     pvd = Providers()
+    user = await pvd.user.get_user_by_name(req.user_name)
+    if not user:
+        raise UserNotFoundError(req.user_name)
+    ctx = Context(user=user)
     svc = Services(ctx, pvd)
     res = await svc.chat.get_chat_status_today(req)
     return res
