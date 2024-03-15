@@ -9,9 +9,9 @@ from simplylab.providers import Providers
 
 
 class ChatService:
-    def __init__(self, ctx: Context, provider: Providers):
+    def __init__(self, ctx: Context, providers: Providers):
         self.ctx = ctx
-        self.pvd = provider
+        self.pvd = providers
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
         if self.pvd.chat.check_user_message_limited_in_30_seconds(self.ctx.user.id):
