@@ -1,11 +1,12 @@
 from typing import Optional
 
+from simplylab.database import Database
 from simplylab.entity import UserConversationMessages
 
 
 class ChatProvider:
-    def __init__(self):
-        ...
+    def __init__(self, db: Database) -> None:
+        self.db = db
 
     async def check_user_message_limited_in_30_seconds(self, user_id: str) -> bool:
         ...

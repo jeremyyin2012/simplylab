@@ -2,10 +2,12 @@ from openai import OpenAI
 from os import getenv
 from loguru import logger
 
+from simplylab.database import Database
+
 
 class OpenRouterProvider:
-    def __init__(self):
-        ...
+    def __init__(self, db: Database) -> None:
+        self.db = db
 
     async def chat(self, content: str) -> str:
         # gets API Key from environment variable OPENAI_API_KEY

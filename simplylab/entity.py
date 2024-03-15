@@ -1,8 +1,9 @@
 import datetime
 from enum import Enum
+from typing import Optional, Annotated
 
 from bson import ObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
 
 
 class GetAiChatResponseInput(BaseModel):
@@ -37,52 +38,99 @@ class GetChatStatusTodayOutput(BaseModel):
 
 
 # === mongodb documents start ===
+
+PyObjectId = Annotated[str, BeforeValidator(ObjectId)]
+
+
 class MessageRoleType(str, Enum):
     User = "user"
     Ai = "ai"
 
 
 class User(BaseModel):
-    _id: ObjectId
-    name: str
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    name: str = Field(min_length=3, max_length=100, description="user name")
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    updated_at: Optional[datetime.datetime] = Field(default=None)
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "_id": "xxx",
+                "name": "jdoe",
+                "created_at": datetime.datetime.now(),
+                "updated_at": None,
+            }
+        },
+    )
 
 
 class Message(BaseModel):
-    _id: ObjectId
-    conversation_id: ObjectId
-    user_id: ObjectId
-    type: MessageRoleType
-    text: str
-    created_at: datetime.datetime
-    created_by: ObjectId
-    updated_at: datetime.datetime
-    updated_by: ObjectId
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    conversation_id: PyObjectId = Field()
+    user_id: PyObjectId = Field()
+    type: MessageRoleType = Field()
+    text: str = Field()
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    created_by: PyObjectId = Field()
+    updated_at: Optional[datetime.datetime] = Field(default=None)
+    updated_by: Optional[PyObjectId] = Field(default=None)
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "_id": "xxx",
+                "conversation_id": "xxx",
+                "user_id": "xxx",
+                "type": MessageRoleType.User,
+                "text": "xxx",
+                "created_at": datetime.datetime.now(),
+                "created_by": "xxx",
+                "updated_at": None,
+                "updated_by": None,
+            }
+        },
+    )
 
 
 class Conversation(BaseModel):
-    _id: ObjectId
-    user_id: ObjectId
-    title: str
-    created_at: datetime.datetime
-    created_by: ObjectId
-    updated_at: datetime.datetime
-    updated_by: ObjectId
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    user_id: PyObjectId = Field()
+    title: str = Field()
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    created_by: PyObjectId = Field()
+    updated_at: Optional[datetime.datetime] = Field(default=None)
+    updated_by: Optional[PyObjectId] = Field(default=None)
 
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "_id": "xxx",
+                "user_id": "xxx",
+                "title": "xx",
+                "created_at": datetime.datetime.now(),
+                "created_by": "xxx",
+                "updated_at": None,
+                "updated_by": None,
+            }
+        },
+    )
 
 # === mongodb documents end ===
 
 
 class UserConversationMessages(BaseModel):
-    user_id: ObjectId
-    user_name: str
-    conversation_id: ObjectId
-    title: str
-    created_at: datetime.datetime
-    created_by: ObjectId
-    updated_at: datetime.datetime
-    updated_by: ObjectId
+    user_id: PyObjectId = Field()
+    user_name: str = Field()
+    conversation_id: PyObjectId = Field()
+    title: str = Field()
+    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+    created_by: PyObjectId = Field()
+    updated_at: Optional[datetime.datetime] = Field(default=None)
+    updated_by: Optional[PyObjectId] = Field(default=None)
     messages: list[Message]
 
 

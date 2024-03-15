@@ -1,11 +1,13 @@
 import os
 from typing import Union
-
 import sentry_sdk
+import motor.motor_asyncio
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
+from loguru import logger
 from starlette.responses import JSONResponse
 
+from simplylab.database import Database
 from simplylab.entity import GetAiChatResponseInput, Context
 from simplylab.entity import GetAiChatResponseOutput
 from simplylab.entity import GetUserChatHistoryInput
@@ -30,6 +32,22 @@ sentry_sdk.init(
 app = FastAPI()
 
 
+@app.on_event("startup")
+def startup_db_client():
+    mongo_username = os.getenv("MONGO_USERNAME")
+    mongo_password = os.getenv("MONGO_PASSWORD")
+    mongo_uri = f"mongodb://{mongo_username}:{mongo_password}@mongodb:27017/"
+    app.mongodb_client = motor.motor_asyncio.AsyncIOMotorClient(mongo_uri)
+    app.db = Database(client=app.mongodb_client)
+    logger.info("Connected to the MongoDB database!")
+
+
+@app.on_event("shutdown")
+def shutdown_db_client():
+    app.mongodb_client.close()
+    logger.info("Disconnected to the MongoDB database!")
+
+
 @app.exception_handler(Error)
 async def error_handler(request: Request, exc: Error):
     return JSONResponse(
@@ -44,8 +62,8 @@ async def hi():
 
 
 @app.post("/api/v1/get_ai_chat_response")
-async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-    pvd = Providers()
+async def get_ai_chat_response(request: Request, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
+    pvd = Providers(db=request.app.db)
     user = await pvd.user.get_user_by_name(req.user_name)
     if not user:
         raise UserNotFoundError(req.user_name)
@@ -56,8 +74,8 @@ async def get_ai_chat_response(req: GetAiChatResponseInput) -> GetAiChatResponse
 
 
 @app.post("/api/v1/get_user_chat_history")
-async def get_user_chat_history(req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
-    pvd = Providers()
+async def get_user_chat_history(request: Request, req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
+    pvd = Providers(db=request.app.db)
     user = await pvd.user.get_user_by_name(req.user_name)
     if not user:
         raise UserNotFoundError(req.user_name)
@@ -68,8 +86,8 @@ async def get_user_chat_history(req: GetUserChatHistoryInput) -> GetUserChatHist
 
 
 @app.post("/api/v1/get_chat_status_today")
-async def get_chat_status_today(req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
-    pvd = Providers()
+async def get_chat_status_today(request: Request, req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
+    pvd = Providers(db=request.app.db)
     user = await pvd.user.get_user_by_name(req.user_name)
     if not user:
         raise UserNotFoundError(req.user_name)
