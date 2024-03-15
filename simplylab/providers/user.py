@@ -14,5 +14,6 @@ class UserProvider:
         user = await self.db.user.find_one({"name": user_name})
         if not user:
             user = User(name=user_name)
-            user = await self.db.user.insert_one(user.model_dump())
+            res = await self.db.user.insert_one(user.model_dump())
+            user = await self.db.user.find_one({"_id": res.inserted_id})
         return user

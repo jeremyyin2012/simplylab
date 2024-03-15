@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:e5b52083ef7f859b75eea32132ef301095ac77b239a08c49229d4a37474b980b"
+content_hash = "sha256:68aec295b130841c79040d9aae40daa7c15c204a7b5756850923308c9460d5b4"
 
 [[package]]
 name = "annotated-types"
@@ -268,6 +268,21 @@ files = [
     {file = "pydantic_core-2.16.3-pp39-pypy39_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:ed25e1835c00a332cb10c683cd39da96a719ab1dfc08427d476bce41b92531fc"},
     {file = "pydantic_core-2.16.3-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:86b3d0033580bd6bbe07590152007275bd7af95f98eaa5bd36f3da219dcd93da"},
     {file = "pydantic_core-2.16.3.tar.gz", hash = "sha256:1cac689f80a3abab2d3c0048b29eea5751114054f032a941a32de4c852c59cad"},
+]
+
+[[package]]
+name = "pydantic-mongo"
+version = "2.1.2"
+requires_python = ">=3.8"
+summary = "Document object mapper for pydantic and pymongo"
+groups = ["default"]
+dependencies = [
+    "pydantic<3.0.0,>=2.0.2",
+    "pymongo<5.0,>=4.3",
+]
+files = [
+    {file = "pydantic-mongo-2.1.2.tar.gz", hash = "sha256:3eb4db8f2eb5abb1e4af4d005c92a2ca0c386c3c8eff125a9174edfe4ffe6633"},
+    {file = "pydantic_mongo-2.1.2-py2.py3-none-any.whl", hash = "sha256:44cc02484eb87e812064cf85130e87b8e5e0fa660cd7188e46f153b7eaf58617"},
 ]
 
 [[package]]

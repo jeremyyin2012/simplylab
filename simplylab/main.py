@@ -48,6 +48,14 @@ def shutdown_db_client():
     logger.info("Disconnected to the MongoDB database!")
 
 
+@app.exception_handler(Exception)
+async def exception_handler(request: Request, exc: Error):
+    return JSONResponse(
+        status_code=500,
+        content={"message": str(exc)}
+    )
+
+
 @app.exception_handler(Error)
 async def error_handler(request: Request, exc: Error):
     return JSONResponse(

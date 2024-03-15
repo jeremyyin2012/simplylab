@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-from typing import Optional, Annotated
+from typing import Optional, Annotated, Any
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
@@ -39,7 +39,26 @@ class GetChatStatusTodayOutput(BaseModel):
 
 # === mongodb documents start ===
 
-PyObjectId = Annotated[str, BeforeValidator(ObjectId)]
+
+from pydantic import (AfterValidator, GetPydanticSchema,
+                      PlainSerializer, WithJsonSchema)
+from pydantic_mongo import ObjectIdField as _objectIdField
+
+ObjectIdField = Annotated[
+    _objectIdField,
+    AfterValidator(lambda id: _objectIdField(id)),
+    PlainSerializer(lambda id: str(id), return_type=str, when_used='json-unless-none'),
+    WithJsonSchema({'type': 'string'}, mode='serialization'),
+    WithJsonSchema({'type': 'string'}, mode='validation'),
+    GetPydanticSchema(lambda _s, h: h(Any))
+]
+
+
+class Test(BaseModel):
+    id: ObjectIdField = Field(default_factory=ObjectIdField, alias='_id', title='_id')
+
+
+# ObjectIdField = Annotated[str, BeforeValidator(ObjectId)]
 
 
 class MessageRoleType(str, Enum):
@@ -48,13 +67,17 @@ class MessageRoleType(str, Enum):
 
 
 class User(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
     name: str = Field(min_length=3, max_length=100, description="user name")
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     updated_at: Optional[datetime.datetime] = Field(default=None)
 
     model_config = ConfigDict(
         populate_by_name=True,
+        # json_encoders={
+        #     ObjectId: str,
+        #     datetime: lambda dt: dt.isoformat()
+        # },
         json_schema_extra={
             "example": {
                 "_id": "xxx",
@@ -67,15 +90,15 @@ class User(BaseModel):
 
 
 class Message(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    conversation_id: PyObjectId = Field()
-    user_id: PyObjectId = Field()
+    id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
+    conversation_id: ObjectIdField = Field()
+    user_id: ObjectIdField = Field()
     type: MessageRoleType = Field()
     text: str = Field()
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    created_by: PyObjectId = Field()
+    created_by: ObjectIdField = Field()
     updated_at: Optional[datetime.datetime] = Field(default=None)
-    updated_by: Optional[PyObjectId] = Field(default=None)
+    updated_by: Optional[ObjectIdField] = Field(default=None)
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -96,13 +119,13 @@ class Message(BaseModel):
 
 
 class Conversation(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    user_id: PyObjectId = Field()
+    id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
+    user_id: ObjectIdField = Field()
     title: str = Field()
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    created_by: PyObjectId = Field()
+    created_by: ObjectIdField = Field()
     updated_at: Optional[datetime.datetime] = Field(default=None)
-    updated_by: Optional[PyObjectId] = Field(default=None)
+    updated_by: Optional[ObjectIdField] = Field(default=None)
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -119,18 +142,19 @@ class Conversation(BaseModel):
         },
     )
 
+
 # === mongodb documents end ===
 
 
 class UserConversationMessages(BaseModel):
-    user_id: PyObjectId = Field()
+    user_id: ObjectIdField = Field()
     user_name: str = Field()
-    conversation_id: PyObjectId = Field()
+    conversation_id: ObjectIdField = Field()
     title: str = Field()
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    created_by: PyObjectId = Field()
+    created_by: ObjectIdField = Field()
     updated_at: Optional[datetime.datetime] = Field(default=None)
-    updated_by: Optional[PyObjectId] = Field(default=None)
+    updated_by: Optional[ObjectIdField] = Field(default=None)
     messages: list[Message]
 
 
