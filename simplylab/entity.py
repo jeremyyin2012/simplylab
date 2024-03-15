@@ -91,7 +91,7 @@ class User(BaseModel):
 
 class Message(BaseModel):
     id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
-    conversation_id: ObjectIdField = Field()
+    # conversation_id: ObjectIdField = Field()
     user_id: ObjectIdField = Field()
     type: MessageRoleType = Field()
     text: str = Field()
@@ -118,44 +118,44 @@ class Message(BaseModel):
     )
 
 
-class Conversation(BaseModel):
-    id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
-    user_id: ObjectIdField = Field()
-    title: str = Field()
-    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    created_by: ObjectIdField = Field()
-    updated_at: Optional[datetime.datetime] = Field(default=None)
-    updated_by: Optional[ObjectIdField] = Field(default=None)
-
-    model_config = ConfigDict(
-        populate_by_name=True,
-        json_schema_extra={
-            "example": {
-                "_id": "xxx",
-                "user_id": "xxx",
-                "title": "xx",
-                "created_at": datetime.datetime.now(),
-                "created_by": "xxx",
-                "updated_at": None,
-                "updated_by": None,
-            }
-        },
-    )
+# class Conversation(BaseModel):
+#     id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
+#     user_id: ObjectIdField = Field()
+#     title: str = Field()
+#     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+#     created_by: ObjectIdField = Field()
+#     updated_at: Optional[datetime.datetime] = Field(default=None)
+#     updated_by: Optional[ObjectIdField] = Field(default=None)
+#
+#     model_config = ConfigDict(
+#         populate_by_name=True,
+#         json_schema_extra={
+#             "example": {
+#                 "_id": "xxx",
+#                 "user_id": "xxx",
+#                 "title": "xx",
+#                 "created_at": datetime.datetime.now(),
+#                 "created_by": "xxx",
+#                 "updated_at": None,
+#                 "updated_by": None,
+#             }
+#         },
+#     )
 
 
 # === mongodb documents end ===
 
 
-class UserConversationMessages(BaseModel):
-    user_id: ObjectIdField = Field()
-    user_name: str = Field()
-    conversation_id: ObjectIdField = Field()
-    title: str = Field()
-    created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    created_by: ObjectIdField = Field()
-    updated_at: Optional[datetime.datetime] = Field(default=None)
-    updated_by: Optional[ObjectIdField] = Field(default=None)
-    messages: list[Message]
+# class UserConversationMessages(BaseModel):
+#     user_id: ObjectIdField = Field()
+#     user_name: str = Field()
+#     conversation_id: ObjectIdField = Field(default=None)
+#     title: str = Field()
+#     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
+#     created_by: ObjectIdField = Field()
+#     updated_at: Optional[datetime.datetime] = Field(default=None)
+#     updated_by: Optional[ObjectIdField] = Field(default=None)
+#     messages: list[Message]
 
 
 class Context(BaseModel):

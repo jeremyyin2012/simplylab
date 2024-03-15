@@ -1,7 +1,10 @@
 from typing import Any
 
+from loguru import logger
+
 from simplylab.entity import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput, UserChatMessage, \
-    GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput, Context
+    GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput, Context, Message, MessageRoleType
+from simplylab.error import MessageLimitedInDailyError
 from simplylab.providers import Providers
 
 
@@ -11,15 +14,35 @@ class ChatService:
         self.pvd = provider
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-        message = req.message
-        response_content = await self.pvd.openrouter.chat(content=message)
+        request_content = req.message
+        # todo: request content middle out
+        response_content = await self.pvd.openrouter.chat(content=request_content)
+        user_message = Message(
+            user_id=self.ctx.user.id,
+            type=MessageRoleType.User,
+            text=request_content,
+            created_by=self.ctx.user.id,
+        )
+        ai_message = Message(
+            user_id=self.ctx.user.id,
+            type=MessageRoleType.Ai,
+            text=response_content,
+            created_by=self.ctx.user.id,
+        )
+        messages = [user_message, ai_message]
+        count = await self.pvd.chat.add_chat_message(messages=messages)
+        logger.debug(f"Added {count} chat messages")
         res = GetAiChatResponseOutput(response=response_content)
         return res
 
     async def get_user_chat_history(self, req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
-        res = [UserChatMessage(type="user", text="echo")]
+        messages = await self.pvd.chat.get_user_chat_messages(user_id=self.ctx.user.id, limit=req.last_n)
+        res = []
+        for message in messages:
+            res.append(UserChatMessage(type=message.type.value, text=message.text))
         return res
 
     async def get_chat_status_today(self, req: GetChatStatusTodayInput) -> GetChatStatusTodayOutput:
-        res = GetChatStatusTodayOutput(user_name=req.user_name, chat_cnt=0)
+        count = await self.pvd.chat.get_user_chat_messages_count_today(user_id=self.ctx.user.id)
+        res = GetChatStatusTodayOutput(user_name=self.ctx.user.name, chat_cnt=count)
         return res

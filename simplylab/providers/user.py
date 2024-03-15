@@ -1,6 +1,8 @@
 import datetime
 from typing import Optional
 
+from loguru import logger
+
 from simplylab.database import Database
 from simplylab.entity import User
 
@@ -14,6 +16,7 @@ class UserProvider:
         user = await self.db.user.find_one({"name": user_name})
         if not user:
             user = User(name=user_name)
-            res = await self.db.user.insert_one(user.model_dump())
+            res = await self.db.user.insert_one(user.model_dump(by_alias=True))
             user = await self.db.user.find_one({"_id": res.inserted_id})
+        logger.debug(f"user: {user}")
         return user

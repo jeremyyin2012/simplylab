@@ -30,5 +30,6 @@ class OpenRouterProvider:
                 },
             ],
         )
-        print(completion.choices[0].message.content)
+        logger.debug(f"request content: {content}")
+        logger.debug(f"response content: {completion.choices[0].message.content}")
         return completion.choices[0].message.content
