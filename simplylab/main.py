@@ -34,9 +34,11 @@ app = FastAPI()
 
 @app.on_event("startup")
 def startup_db_client():
+    mongo_host = os.getenv("MONGO_HOST", "localhost")
+    mongo_port = os.getenv("MONGO_PORT", "27017")
     mongo_username = os.getenv("MONGO_USERNAME")
     mongo_password = os.getenv("MONGO_PASSWORD")
-    mongo_uri = f"mongodb://{mongo_username}:{mongo_password}@mongodb:27017/"
+    mongo_uri = f"mongodb://{mongo_username}:{mongo_password}@{mongo_host}:{mongo_port}/"
     app.mongodb_client = motor.motor_asyncio.AsyncIOMotorClient(mongo_uri)
     app.db = Database(client=app.mongodb_client)
     logger.info("Connected to the MongoDB database!")
