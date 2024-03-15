@@ -1,14 +1,14 @@
 from typing import Any
 
 from simplylab.entity import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput, UserChatMessage, \
-    GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput
+    GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput, Context
 from simplylab.providers import Providers
 
 
 class ChatService:
-    def __init__(self, ctx: Any):
+    def __init__(self, ctx: Context, provider: Providers):
         self.ctx = ctx
-        self.pvd = Providers()
+        self.pvd = provider
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
         message = req.message

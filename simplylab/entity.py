@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 
 
+class Context(BaseModel):
+    user_name: str
+
+
 class GetAiChatResponseInput(BaseModel):
     message: str
     user_name: str
