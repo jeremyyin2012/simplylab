@@ -4,7 +4,7 @@ from loguru import logger
 
 from simplylab.entity import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput, UserChatMessage, \
     GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput, Context, Message, MessageRoleType
-from simplylab.error import MessageLimitedInDailyError
+from simplylab.error import MessageLimitedInDailyError, MessageLimitedIn30SecondsError
 from simplylab.providers import Providers
 
 
@@ -14,6 +14,11 @@ class ChatService:
         self.pvd = provider
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
+        if self.pvd.chat.check_user_message_limited_in_30_seconds(self.ctx.user.id):
+            raise MessageLimitedIn30SecondsError()
+        if self.pvd.chat.check_user_message_limited_in_daily(self.ctx.user.id):
+            raise MessageLimitedInDailyError()
+
         request_content = req.message
         # todo: request content middle out
         response_content = await self.pvd.openrouter.chat(content=request_content)
