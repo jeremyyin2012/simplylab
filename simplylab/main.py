@@ -83,15 +83,15 @@ async def get_ai_chat_response(request: Request, req: GetAiChatResponseInput) ->
     return res
 
 
-@app.post("/api/v1/get_user_chat_history")
-async def get_user_chat_history(request: Request, req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
+@app.get("/api/v1/get_user_chat_history")
+async def get_user_chat_history(request: Request, user_name: str, last_n: int) -> GetUserChatHistoryOutput:
     pvd = Providers(db=request.app.db)
-    user = await pvd.user.get_user_by_name(req.user_name)
+    user = await pvd.user.get_user_by_name(user_name)
     if not user:
-        raise UserNotFoundError(req.user_name)
+        raise UserNotFoundError(user_name)
     ctx = Context(user=user)
     svc = Services(ctx, pvd)
-    res = await svc.chat.get_user_chat_history(req)
+    res = await svc.chat.get_user_chat_history(last_n=last_n)
     return res
 
 

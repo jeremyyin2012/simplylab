@@ -40,8 +40,8 @@ class ChatService:
         res = GetAiChatResponseOutput(response=response_content)
         return res
 
-    async def get_user_chat_history(self, req: GetUserChatHistoryInput) -> GetUserChatHistoryOutput:
-        messages = await self.pvd.chat.get_user_chat_messages(user_id=self.ctx.user.id, limit=req.last_n)
+    async def get_user_chat_history(self, last_n: int) -> GetUserChatHistoryOutput:
+        messages = await self.pvd.chat.get_user_chat_messages(user_id=self.ctx.user.id, limit=last_n)
         res = []
         for message in messages:
             res.append(UserChatMessage(type=message.type.value, text=message.text))
