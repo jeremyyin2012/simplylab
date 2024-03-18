@@ -9,5 +9,6 @@ ADD pyproject.toml /app
 ADD .env /app
 ADD simplylab /app
 
+ENV PDM_USE_VENV=False
 RUN pip install pdm && pdm install
 
