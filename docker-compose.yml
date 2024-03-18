@@ -23,3 +23,6 @@ services:
       options:
         max-size: "2m"
         max-file: "10"
+
+networks:
+  simplylab:
