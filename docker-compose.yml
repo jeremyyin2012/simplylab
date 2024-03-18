@@ -29,3 +29,5 @@ services:
 networks:
   simplylab:
   nginx-proxy:
+    external:
+      name: nginx-proxy_default
