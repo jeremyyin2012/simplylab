@@ -15,6 +15,7 @@ dependencies = [
     "motor>=3.3.2",
     "sentry-sdk>=1.42.0",
     "pydantic-mongo>=2.1.2",
+    "gunicorn>=21.2.0",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

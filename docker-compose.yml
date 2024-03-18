@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  simplylab:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    restart: always
+    command: gunicorn simplylab.main:app --workers=4 --worker-class=uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000 --worker-tmp-dir /dev/shm --log-level=debug
+    environment:
+      TZ: "Asia/Shanghai"
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+    expose:
+      - 8000
+    tty: true
+    stdin_open: true
+    networks:
+      - simplylab
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "2m"
+        max-file: "10"
