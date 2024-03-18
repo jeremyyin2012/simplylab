@@ -7,7 +7,8 @@ WORKDIR /app
 ADD pdm.lock /app
 ADD pyproject.toml /app
 ADD .env /app
-ADD simplylab /app
+ADD simplylab /app/simplylab
 
-RUN pip install pdm && pdm config python.use_venv false && pdm install
+ENV PATH="/app/.venv/bin:$PATH"
+RUN pip install pdm && pdm install
 
