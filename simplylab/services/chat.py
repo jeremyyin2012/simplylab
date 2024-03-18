@@ -14,9 +14,9 @@ class ChatService:
         self.pvd = providers
 
     async def get_ai_chat_response(self, req: GetAiChatResponseInput) -> GetAiChatResponseOutput:
-        if self.pvd.chat.check_user_message_limited_in_30_seconds(self.ctx.user.id):
+        if await self.pvd.chat.check_user_message_limited_in_30_seconds(self.ctx.user.id):
             raise MessageLimitedIn30SecondsError()
-        if self.pvd.chat.check_user_message_limited_in_daily(self.ctx.user.id):
+        if await self.pvd.chat.check_user_message_limited_in_daily(self.ctx.user.id):
             raise MessageLimitedInDailyError()
 
         request_content = req.message
