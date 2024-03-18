@@ -19,6 +19,7 @@ services:
     stdin_open: true
     networks:
       - simplylab
+      - nginx-proxy
     logging:
       driver: "json-file"
       options:
@@ -27,3 +28,4 @@ services:
 
 networks:
   simplylab:
+  nginx-proxy:
