@@ -4,7 +4,7 @@ from typing import Optional
 from loguru import logger
 
 from simplylab.database import Database
-from simplylab.entity import User
+from simplylab.model.table import User
 
 
 class UserProvider:

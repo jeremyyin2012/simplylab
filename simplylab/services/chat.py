@@ -2,8 +2,12 @@ from typing import Any
 
 from loguru import logger
 
-from simplylab.entity import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput, UserChatMessage, \
-    GetChatStatusTodayOutput, GetAiChatResponseOutput, GetUserChatHistoryOutput, Context, Message, MessageRoleType
+from simplylab.model.res import UserChatMessage, \
+    GetUserChatHistoryOutput
+from simplylab.model.entity import Context
+from simplylab.model.res import GetAiChatResponseOutput, GetChatStatusTodayOutput
+from simplylab.model.req import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput
+from simplylab.model.table import MessageRoleType, Message
 from simplylab.error import MessageLimitedInDailyError, MessageLimitedIn30SecondsError
 from simplylab.providers import Providers
 

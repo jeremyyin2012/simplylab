@@ -1,6 +1,6 @@
 from typing import Any
 
-from simplylab.entity import Context
+from simplylab.model.entity import Context
 from simplylab.providers import Providers
 from simplylab.services.chat import ChatService
 

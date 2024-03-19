@@ -1,48 +1,12 @@
 import datetime
 from enum import Enum
-from typing import Optional, Annotated, Any
+from typing import Annotated, Any, Optional
 
-from bson import ObjectId
-from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
-
-
-class GetAiChatResponseInput(BaseModel):
-    message: str
-    user_name: str
-
-
-class GetAiChatResponseOutput(BaseModel):
-    response: str
-
-
-class GetUserChatHistoryInput(BaseModel):
-    user_name: str
-    last_n: int
-
-
-class UserChatMessage(BaseModel):
-    type: str
-    text: str
-
-
-type GetUserChatHistoryOutput = list[UserChatMessage]
-
-
-class GetChatStatusTodayInput(BaseModel):
-    user_name: str
-
-
-class GetChatStatusTodayOutput(BaseModel):
-    user_name: str
-    chat_cnt: int
-
-
-# === mongodb documents start ===
-
-
-from pydantic import (AfterValidator, GetPydanticSchema,
-                      PlainSerializer, WithJsonSchema)
+from pydantic import AfterValidator, PlainSerializer, WithJsonSchema, GetPydanticSchema, BaseModel, Field, ConfigDict
 from pydantic_mongo import ObjectIdField as _objectIdField
+
+# ObjectIdField = Annotated[str, BeforeValidator(ObjectId)]
+
 
 ObjectIdField = Annotated[
     _objectIdField,
@@ -56,9 +20,6 @@ ObjectIdField = Annotated[
 
 class Test(BaseModel):
     id: ObjectIdField = Field(default_factory=ObjectIdField, alias='_id', title='_id')
-
-
-# ObjectIdField = Annotated[str, BeforeValidator(ObjectId)]
 
 
 class MessageRoleType(str, Enum):
@@ -117,7 +78,6 @@ class Message(BaseModel):
         },
     )
 
-
 # class Conversation(BaseModel):
 #     id: ObjectIdField = Field(default_factory=ObjectIdField, alias="_id", title='_id')
 #     user_id: ObjectIdField = Field()
@@ -141,22 +101,3 @@ class Message(BaseModel):
 #             }
 #         },
 #     )
-
-
-# === mongodb documents end ===
-
-
-# class UserConversationMessages(BaseModel):
-#     user_id: ObjectIdField = Field()
-#     user_name: str = Field()
-#     conversation_id: ObjectIdField = Field(default=None)
-#     title: str = Field()
-#     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-#     created_by: ObjectIdField = Field()
-#     updated_at: Optional[datetime.datetime] = Field(default=None)
-#     updated_by: Optional[ObjectIdField] = Field(default=None)
-#     messages: list[Message]
-
-
-class Context(BaseModel):
-    user: User

@@ -8,12 +8,10 @@ from loguru import logger
 from starlette.responses import JSONResponse
 
 from simplylab.database import Database
-from simplylab.entity import GetAiChatResponseInput, Context
-from simplylab.entity import GetAiChatResponseOutput
-from simplylab.entity import GetUserChatHistoryInput
-from simplylab.entity import GetUserChatHistoryOutput
-from simplylab.entity import GetChatStatusTodayInput
-from simplylab.entity import GetChatStatusTodayOutput
+from simplylab.model.entity import Context
+from simplylab.model.req import GetAiChatResponseInput, GetUserChatHistoryInput, GetChatStatusTodayInput
+from simplylab.model.res import GetAiChatResponseOutput, GetChatStatusTodayOutput
+from simplylab.model.res import GetUserChatHistoryOutput
 from simplylab.error import Error, UserNotFoundError
 from simplylab.providers import Providers
 from simplylab.services import Services

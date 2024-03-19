@@ -5,7 +5,8 @@ import pymongo
 from loguru import logger
 
 from simplylab.database import Database
-from simplylab.entity import ObjectIdField, Message
+from simplylab.model.table import ObjectIdField
+from simplylab.model.table import Message
 
 
 class ChatProvider:
