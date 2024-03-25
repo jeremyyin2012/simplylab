@@ -1,5 +1,3 @@
-from typing import Any
-
 from loguru import logger
 
 from simplylab.model.res import UserChatMessage, \
@@ -24,7 +22,6 @@ class ChatService:
             raise MessageLimitedInDailyError()
 
         request_content = req.message
-        # todo: request content middle out
         response_content = await self.pvd.openrouter.chat(content=request_content)
         user_message = Message(
             user_id=self.ctx.user.id,
